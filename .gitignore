@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.venv
+*.sqlite3
+*.log
+
+# Airflow
+airflow/airflow.db
+airflow/airflow-webserver.pid
+airflow/logs/
+
+# Docker
+*.dockerfile
+docker-compose.yml
+docker-compose.override.yml
+.dockerignore
+
+# VSCode / IDEs
+.vscode/
+.idea/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Data files
+/data/
+*.csv
+*.parquet

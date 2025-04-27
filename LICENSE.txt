@@ -1,0 +1,18 @@
+## LICENSE
+
+```markdown
+# Restricted Private License (RPL) 1.0
+
+Copyright (c) [2025] [Your Name]
+
+All rights reserved.
+
+Permission is hereby granted to contributors to view, review, and contribute to this project solely for the purpose of collaboration within authorized environments.
+
+Unauthorized copying, modification, reproduction, distribution, or use of any part of this project, including but not limited to ideas, architecture, designs, and code, without explicit written permission from the author, is strictly prohibited.
+
+This software and associated documentation files are provided "as is", without warranty of any kind, express or implied.
+
+Violation of these terms may result in legal action.
+
+Author Contact: Jakub Milczarczyk — www.linkedin.com/in/jakub-milczarczyk or milczarczykjakub@gmail.com
