@@ -1,36 +1,66 @@
+# ---------------------------
 # Python
+# ---------------------------
 __pycache__/
+*.py[cod]
 *.pyc
-*.pyo
-*.pyd
-.env
-.venv
-*.sqlite3
-*.log
-venv/*
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
 
-# Airflow
-airflow/airflow.db
-airflow/airflow-webserver.pid
-airflow/logs/
+# ---------------------------
+# Virtual Environment
+# ---------------------------
+.venv/
+env/
+venv/
 
-# Docker
-*.dockerfile
-docker-compose.yml
-docker-compose.override.yml
-.dockerignore
+# ---------------------------
+# Poetry
+# ---------------------------
+poetry.lock
 
-# VSCode / IDEs
-.vscode/
-.idea/
+# (opcjonalnie - zwykle commitujemy poetry.lock aby mieć powtarzalne środowisko,
+# ale jeśli projekt bardzo szybko się zmienia i MVP ma mieć elastyczne zależności, można go ignorować)
 
-# Jupyter
+# ---------------------------
+# Jupyter / Notebooks
+# ---------------------------
 .ipynb_checkpoints/
 
-# Data files
-/data/
-*.csv
-*.parquet
+# ---------------------------
+# Airflow
+# ---------------------------
+airflow/airflow.db
+airflow/airflow.cfg
+airflow/unittests.cfg
+airflow/tmp/
+airflow/.env
+airflow/logs/
+dags/__pycache__
+dags/*.pyc
+dag_processor_manager_pid.txt
 
-# Private notes
+# ---------------------------
+# Docker
+# ---------------------------
+*.log
+*.pid
+docker-compose.override.yml
+
+# ---------------------------
+# Data (lokalne pliki danych)
+# ---------------------------
+data/raw/
+data/processed/
 notes/*
+
+# ---------------------------
+# IDE / OS pliki
+# ---------------------------
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

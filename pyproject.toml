@@ -1,0 +1,21 @@
+[project]
+name = "greengrid-forecast"
+version = "0.1.0"
+description = "Energy consumption and RES production forecasting system."
+authors = [
+    {name = "Jakub Milczarczyk",email = "milczarczykjakub@gmail.com"}
+]
+license = {text = "Proprietary"}
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pandas (>=2.2.3,<3.0.0)",
+    "polars (>=1.28.1,<2.0.0)",
+    "numpy (>=2.2.5,<3.0.0)",
+    "openmeteo-requests (>=1.4.0,<2.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
