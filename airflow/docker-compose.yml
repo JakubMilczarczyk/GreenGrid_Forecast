@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   postgres:
     image: postgres:14
@@ -22,10 +20,12 @@ services:
       AIRFLOW__CORE__FERNET_KEY: ""
       AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "true"
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOw__CORE__REMOTE_LOGGING: "false"
     ports:
       - "8080:8080"
     volumes:
       - ./dags:/opt/airflow/dags
+      - airflow_logs:/opt/airflow/logs
     command: webserver
 
   airflow-scheduler:
@@ -37,6 +37,7 @@ services:
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
     volumes:
       - ./dags:/opt/airflow/dags
+      - airflow_logs:/opt/airflow/logs
     command: scheduler
 
   airflow-init:
@@ -53,4 +54,5 @@ services:
       "
 
 volumes:
+  airflow_logs: {}
   postgres_data:
