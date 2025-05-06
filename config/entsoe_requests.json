@@ -1,0 +1,13 @@
+[
+    {
+      "name": "actual_generation",
+      "documentType": "A75",
+      "processType": "A16"
+    },
+    {
+      "name": "generation_forecast",
+      "documentType": "A71",
+      "processType": "A01"
+    }
+]
+  
