@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   postgres:
     image: postgres:14
@@ -11,7 +13,9 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   airflow-webserver:
-    image: apache/airflow:2.9.1
+    build:
+      context: .
+      dockerfile: Dockerfile.airflow
     depends_on:
       - postgres
     environment:
@@ -20,33 +24,63 @@ services:
       AIRFLOW__CORE__FERNET_KEY: ""
       AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "true"
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
-      AIRFLOw__CORE__REMOTE_LOGGING: "false"
+      AIRFLOW__CORE__REMOTE_LOGGING: "false"
     ports:
       - "8080:8080"
+    env_file:
+      - .env
     volumes:
-      - ./dags:/opt/airflow/dags
+      - ./airflow/dags:/opt/airflow/dags
       - airflow_logs:/opt/airflow/logs
+      - ./src:/opt/airflow/src
+      - ./app:/opt/airflow/app
+      - ./data/raw:/opt/airflow/data/raw
+      - ./data/processed:/opt/airflow/data/processed
+      - ./data/forecasts:/opt/airflow/data/forecasts
+      - ./config:/opt/airflow/config
     command: webserver
 
   airflow-scheduler:
-    image: apache/airflow:2.9.1
+    build:
+      context: .
+      dockerfile: Dockerfile.airflow
     depends_on:
       - airflow-webserver
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    env_file:
+      - .env
     volumes:
-      - ./dags:/opt/airflow/dags
+      - ./airflow/dags:/opt/airflow/dags
       - airflow_logs:/opt/airflow/logs
+      - ./src:/opt/airflow/src
+      - ./app:/opt/airflow/app
+      - ./data/raw:/opt/airflow/data/raw
+      - ./data/processed:/opt/airflow/data/processed
+      - ./data/forecasts:/opt/airflow/data/forecasts
+      - ./config:/opt/airflow/config
     command: scheduler
 
   airflow-init:
-    image: apache/airflow:2.9.1
+    build:
+      context: .
+      dockerfile: Dockerfile.airflow
     depends_on:
       - postgres
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    env_file:
+      - .env
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./src:/opt/airflow/src              # jeśli chcesz uruchamiać skrypty przy init
+      - ./app:/opt/airflow/app
+      - ./data/raw:/opt/airflow/data/raw
+      - ./data/processed:/opt/airflow/data/processed
+      - ./data/forecasts:/opt/airflow/data/forecasts
+      - ./config:/opt/airflow/config
     entrypoint: >
       bash -c "
         airflow db upgrade &&

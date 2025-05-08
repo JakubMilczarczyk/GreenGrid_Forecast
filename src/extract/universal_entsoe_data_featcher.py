@@ -14,7 +14,8 @@ API_KEY = os.getenv("ENTSOE_API_KEY")
 BASE_URL = "https://web-api.tp.entsoe.eu/api"
 DOMAIN = "10YDK-1--------W"
 RAW_DATA_DIR = Path("data/raw")
-CONFIG_FILE = Path("config/entsoe_requests.json")
+CONFIG_FILE = Path(__file__).parent.parent.parent / "config" / "entsoe_requests.json"
+# CONFIG_FILE = Path("config/entsoe_requests.json")
 
 # Utwórz folder na dane, jeśli nie istnieje
 RAW_DATA_DIR.mkdir(parents=True, exist_ok=True)

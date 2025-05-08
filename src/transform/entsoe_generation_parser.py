@@ -37,32 +37,34 @@ psr_mapping = {
 
 data = []
 
-# Parsowanie danych
-for ts in root.findall("ns:TimeSeries", ns):
-    psr_code = ts.find("ns:MktPSRType/ns:psrType", ns).text
-    psr_name = psr_mapping.get(psr_code, psr_code)
-    business_type = ts.find("ns:businessType", ns).text
-    period = ts.find("ns:Period", ns)
+if __name__=="__main__":
 
-    start = period.find("ns:timeInterval/ns:start", ns).text
-    start_time = datetime.fromisoformat(start.replace("Z", "+00:00"))
-    resolution_minutes = 15  # PT15M
+    # Parsowanie danych
+    for ts in root.findall("ns:TimeSeries", ns):
+        psr_code = ts.find("ns:MktPSRType/ns:psrType", ns).text
+        psr_name = psr_mapping.get(psr_code, psr_code)
+        business_type = ts.find("ns:businessType", ns).text
+        period = ts.find("ns:Period", ns)
 
-    for pt in period.findall("ns:Point", ns):
-        pos = int(pt.find("ns:position", ns).text)
-        qty = float(pt.find("ns:quantity", ns).text)
-        timestamp = start_time + timedelta(minutes=(pos - 1) * resolution_minutes)
-        data.append((timestamp.isoformat(), qty, psr_code, psr_name, business_type))
+        start = period.find("ns:timeInterval/ns:start", ns).text
+        start_time = datetime.fromisoformat(start.replace("Z", "+00:00"))
+        resolution_minutes = 15  # PT15M
 
-# Tworzenie DataFrame z Polars
-df = pl.DataFrame(
-    data,
-    orient="row",
-    schema=["timestamp", "quantity", "psr_code", "psr_name", "business_type"]
-)
+        for pt in period.findall("ns:Point", ns):
+            pos = int(pt.find("ns:position", ns).text)
+            qty = float(pt.find("ns:quantity", ns).text)
+            timestamp = start_time + timedelta(minutes=(pos - 1) * resolution_minutes)
+            data.append((timestamp.isoformat(), qty, psr_code, psr_name, business_type))
 
-# Zapis do CSV
-output_path = "data/processed/entsoe_actual_generation.csv"
-df.write_csv(output_path)
+    # Tworzenie DataFrame z Polars
+    df = pl.DataFrame(
+        data,
+        orient="row",
+        schema=["timestamp", "quantity", "psr_code", "psr_name", "business_type"]
+    )
 
-print(f"Zapisano dane do {output_path}")
+    # Zapis do CSV
+    output_path = "data/processed/entsoe_actual_generation.csv"
+    df.write_csv(output_path)
+
+    print(f"Zapisano dane do {output_path}")
