@@ -30,7 +30,7 @@ for ts in root.findall("ns:TimeSeries", ns):
         data.append((timestamp.isoformat(), qty, business_type))
 
 # Zapis CSV
-df = pl.DataFrame(data, schema=["timestamp", "quantity", "business_type"])
+df = pl.DataFrame(data, orient="row", schema=["timestamp", "quantity", "business_type"])
 df.write_csv(output_csv)
 
 print(f"✔️ Forecast agregowany zapisany: {output_csv}")

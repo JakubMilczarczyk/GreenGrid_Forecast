@@ -57,6 +57,7 @@ for ts in root.findall("ns:TimeSeries", ns):
 # Tworzenie DataFrame z Polars
 df = pl.DataFrame(
     data,
+    orient="row",
     schema=["timestamp", "quantity", "psr_code", "psr_name", "business_type"]
 )
 
