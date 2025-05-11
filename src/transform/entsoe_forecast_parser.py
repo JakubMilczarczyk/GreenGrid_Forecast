@@ -1,10 +1,18 @@
 import xml.etree.ElementTree as ET
+from pathlib import Path
 import polars as pl
 from datetime import datetime, timedelta
 
 # Pliki
-xml_path = "data/raw/generation_forecast.xml"
-output_csv = "data/processed/entsoe_generation_forecast_total.csv"
+# xml_path = "data/raw/generation_forecast.xml"
+# output_csv = "data/processed/entsoe_generation_forecast_total.csv"
+xml_dir_path = Path(__file__).parent.parent.parent / "data" / "raw"
+xml_dir_path.mkdir(parents=True, exist_ok=True)
+xml_path = xml_dir_path / "generation_forecast.xml"
+
+output_csv_dir = Path(__file__).parent.parent.parent / "data" / "processed"
+output_csv_dir.mkdir(parents=True, exist_ok=True)
+output_csv = output_csv_dir / "entsoe_generation_forecast_total.csv"
 
 ns = {"ns": "urn:iec62325.351:tc57wg16:451-6:generationloaddocument:3:0"}
 

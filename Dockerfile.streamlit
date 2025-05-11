@@ -1,0 +1,22 @@
+FROM python:3.11-slim
+
+# Instalacja zależności systemowych
+RUN apt-get update && apt-get install -y build-essential
+
+# Praca wewnątrz katalogu aplikacji
+WORKDIR /app
+
+# Skopiuj kod źródłowy i zależności
+COPY ./app ./app
+COPY ./data ./data
+COPY pyproject.toml poetry.lock ./
+
+# Instalacja Poetry + zależności projektu (jeśli używasz Poetry)
+RUN pip install poetry && \
+    poetry config virtualenvs.create false && \
+    poetry install --only main --no-root --no-interaction
+
+# Otwórz port 8501 i uruchom aplikację
+EXPOSE 8501
+
+CMD ["streamlit", "run", "app/streamlit_app.py", "--server.headless=true", "--server.port=8501", "--server.enableCORS=false"]

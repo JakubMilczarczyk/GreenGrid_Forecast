@@ -1,9 +1,12 @@
 import xml.etree.ElementTree as ET
+from pathlib import Path
 import polars as pl
 from datetime import datetime, timedelta
 
 # Ścieżka do pliku XML
-xml_file = "data/raw/actual_generation.xml"
+xml_file_path = Path(__file__).parent.parent.parent / "data" / "raw"
+xml_file_path.mkdir(parents=True, exist_ok=True)
+xml_file = xml_file_path / "actual_generation.xml"
 
 # Parsowanie XML
 tree = ET.parse(xml_file)
@@ -64,7 +67,10 @@ if __name__=="__main__":
     )
 
     # Zapis do CSV
-    output_path = "data/processed/entsoe_actual_generation.csv"
-    df.write_csv(output_path)
+    output_dir_path = Path(__file__).parent.parent.parent / "data" / "processed"
+    output_dir_path.mkdir(parents=True, exist_ok=True)
 
-    print(f"Zapisano dane do {output_path}")
+    output_file_path = output_dir_path / "entsoe_actual_generation.csv"
+    df.write_csv(output_file_path)
+
+    print(f"Zapisano dane do {output_file_path}")

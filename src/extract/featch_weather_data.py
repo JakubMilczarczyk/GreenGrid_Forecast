@@ -32,7 +32,7 @@ if __name__=="__main__":
         "end_date": end,
         "hourly": HOURLY_PARAMS,
         "timezone": "UTC",
-        "interval": 15  # co 15 minut
+        "interval": 15
     }
 
     url = "https://api.open-meteo.com/v1/forecast"
@@ -43,8 +43,10 @@ if __name__=="__main__":
     weather_json = response.json()
 
     # 📁 Zapis JSON (opcjonalnie)
-    Path("data/raw").mkdir(parents=True, exist_ok=True)
-    with open("data/raw/weather_dk1.json", "w") as f:
+    raw_data_path = Path(__file__).parent.parent.parent / "data" / "raw"
+    raw_data_path.mkdir(parents=True, exist_ok=True)
+    
+    with open(raw_data_path / "weather_dk1.json", "w") as f:
         json.dump(weather_json, f, indent=2)
 
     # 📄 Konwersja do Polars DataFrame
@@ -60,7 +62,8 @@ if __name__=="__main__":
     })
 
     # 💾 Zapis CSV
-    Path("data/processed").mkdir(parents=True, exist_ok=True)
-    df.write_csv("data/processed/weather_dk1.csv")
+    processed_data_path = Path(__file__).parent.parent.parent / "data" / "processed"
+    processed_data_path.mkdir(parents=True, exist_ok=True)
+    df.write_csv(processed_data_path / "weather_dk1.csv")
 
     print("✔️ Pogoda DK1 zapisana: data/processed/weather_dk1.csv")

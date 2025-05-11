@@ -12,7 +12,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  airflow-webserver:
+  airflow-init:
     build:
       context: .
       dockerfile: Dockerfile.airflow
@@ -21,8 +21,35 @@ services:
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    env_file:
+      - .env
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./src:/opt/airflow/src
+      - ./app:/opt/airflow/app
+      - ./data/raw:/opt/airflow/data/raw
+      - ./data/processed:/opt/airflow/data/processed
+      - ./data/forecasts:/opt/airflow/data/forecasts
+      - ./config:/opt/airflow/config
+    entrypoint: >
+      bash -c "
+        echo '⏳ Inicjalizacja bazy danych Airflow...' &&
+        airflow db init &&
+        airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com
+      "
+
+  airflow-webserver:
+    build:
+      context: .
+      dockerfile: Dockerfile.airflow
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
       AIRFLOW__CORE__FERNET_KEY: ""
-      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "true"
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "false"
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
       AIRFLOW__CORE__REMOTE_LOGGING: "false"
     ports:
@@ -45,7 +72,8 @@ services:
       context: .
       dockerfile: Dockerfile.airflow
     depends_on:
-      - airflow-webserver
+      airflow-init:
+        condition: service_completed_successfully
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
@@ -61,13 +89,30 @@ services:
       - ./data/forecasts:/opt/airflow/data/forecasts
       - ./config:/opt/airflow/config
     command: scheduler
+    healthcheck:
+      test: ["CMD-SHELL", "airflow jobs check --job-type SchedulerJob"]
+      interval: 10s
+      retries: 5
+      start_period: 20s
 
-  airflow-init:
+  airflow-trigger:
     build:
       context: .
       dockerfile: Dockerfile.airflow
     depends_on:
-      - postgres
+      airflow-scheduler:
+        condition: service_healthy
+    command: >
+      bash -c "
+        echo '🕒 Czekam 60s na pełne uruchomienie systemu...' &&
+        sleep 30 &&
+        airflow dags unpause transform_forecast_data &&
+        airflow dags unpause transform_generation_data &&
+        airflow dags unpause extract_entsoe_data &&
+        airflow dags unpause extract_weather_data &&
+        airflow dags trigger extract_entsoe_data &&
+        airflow dags trigger extract_weather_data
+      "
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
@@ -75,17 +120,20 @@ services:
       - .env
     volumes:
       - ./airflow/dags:/opt/airflow/dags
-      - ./src:/opt/airflow/src              # jeśli chcesz uruchamiać skrypty przy init
+      - ./src:/opt/airflow/src
       - ./app:/opt/airflow/app
-      - ./data/raw:/opt/airflow/data/raw
-      - ./data/processed:/opt/airflow/data/processed
-      - ./data/forecasts:/opt/airflow/data/forecasts
+      - ./data:/opt/airflow/data
       - ./config:/opt/airflow/config
-    entrypoint: >
-      bash -c "
-        airflow db upgrade &&
-        airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com
-      "
+
+  streamlit-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.streamlit
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./app:/app/app
+      - ./data:/app/data
 
 volumes:
   airflow_logs: {}
