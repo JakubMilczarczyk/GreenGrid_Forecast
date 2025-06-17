@@ -12,7 +12,7 @@ if __name__=="__main__":
 
     # 🕒 Zakres czasowy
     now = datetime.now()
-    start = (now - timedelta(days=3)).strftime("%Y-%m-%d")
+    start = (now - timedelta(days=30)).strftime("%Y-%m-%d")
     end = (now + timedelta(days=1)).strftime("%Y-%m-%d")
 
     # 🌦️ Parametry pogodowe
