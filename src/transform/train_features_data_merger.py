@@ -12,7 +12,7 @@ output_parquet = output_parquet_dir / 'train_features.parquet'
 
 actual_generation_data = processed_data_dir / 'entsoe_actual_generation.csv'
 benchmark_forecast_total_generation = processed_data_dir / 'forecast_generation_total.csv'
-prices = processed_data_dir / 'prices.csv'
+# prices = processed_data_dir / 'prices.csv'
 forecast_weather_data = processed_data_dir / 'weather_dk1.csv'
 
 df_generation = pl.read_csv(actual_generation_data)
@@ -43,18 +43,18 @@ df_forecast = pl.read_csv(benchmark_forecast_total_generation).rename({'quantity
     .dt.replace_time_zone(None)
 ])
 
-df_prices = pl.read_csv(prices).with_columns([
-    pl.col('timestamp')
-    .str.strip_chars()
-    .str.strptime(pl.Datetime)
-    .dt.replace_time_zone(None)
-])
+# df_prices = pl.read_csv(prices).with_columns([
+#     pl.col('timestamp')
+#     .str.strip_chars()
+#     .str.strptime(pl.Datetime)
+#     .dt.replace_time_zone(None)
+# ])
 
 merged = (
     df_weather
     .join(df_forecast, on='timestamp', how='left')
     .join(oze_df, on='timestamp', how='left')
-    .join(df_prices, on='timestamp', how='left')
+    # .join(df_prices, on='timestamp', how='left')
 )
 
 merged = merged.with_columns([
