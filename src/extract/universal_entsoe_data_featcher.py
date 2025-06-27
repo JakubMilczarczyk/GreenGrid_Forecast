@@ -24,7 +24,7 @@ RAW_DATA_DIR.mkdir(parents=True, exist_ok=True)
 def fetch_entsoe_data(document_type: str, process_type: str) -> str:
     now = datetime.now()
     start = (now - timedelta(days=30)).replace(hour=0, minute=0, second=0, microsecond=0)
-    end = start + timedelta(days=1)
+    end = now.replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(days=1)
 
     params = {
         "securityToken": API_KEY,

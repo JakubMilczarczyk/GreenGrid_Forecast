@@ -30,6 +30,7 @@ services:
       - ./data/raw:/opt/airflow/data/raw
       - ./data/processed:/opt/airflow/data/processed
       - ./data/forecasts:/opt/airflow/data/forecasts
+      - ./models:/opt/airflow/models
       - ./config:/opt/airflow/config
     entrypoint: >
       bash -c "
@@ -64,6 +65,7 @@ services:
       - ./data/raw:/opt/airflow/data/raw
       - ./data/processed:/opt/airflow/data/processed
       - ./data/forecasts:/opt/airflow/data/forecasts
+      - ./models:/opt/airflow/models
       - ./config:/opt/airflow/config
     command: webserver
 
@@ -87,6 +89,7 @@ services:
       - ./data/raw:/opt/airflow/data/raw
       - ./data/processed:/opt/airflow/data/processed
       - ./data/forecasts:/opt/airflow/data/forecasts
+      - ./models:/opt/airflow/models
       - ./config:/opt/airflow/config
     command: scheduler
     healthcheck:

@@ -18,15 +18,17 @@ FEATURES_FILE = PROCESSED_DIR / "train_features.parquet"
 MODEL_FILE = MODEL_DIR / 'linear_regression_model.joblib'
 
 def clean_data(df: pl.DataFrame) -> pl.DataFrame:
-    """Cleans the input DataFrame by removing rows with NaN values."""
-    df_nulls = df.filter(pl.any_horizontal(pl.all().is_null()))
-    logging.info(f"Nulls per column:\n{df.null_count()}")
-    logging.info(f'Null values found: {df_nulls.shape[0]}')
-    return df.drop_nulls()
+    """Removes rows where target column 'actual_OZE_MWh' is null."""
+    logging.info(f'Nulls per column:\n{df.null_count()}')
+    df_cleaned = df.filter(pl.col('actual_OZE_MWh').is_not_null())
+    logging.info(f'Rows with "actual_OZE_MWh": {df_cleaned.shape[0]}')
+    return df_cleaned
 
 def encode_and_split(df: pl.DataFrame, target_col: str, drop_cols: str) -> tuple:
     """Prepares the data for training by splitting into features and target."""
     df = df.to_pandas()
+    num_cols = df.select_dtypes(include=['float64', 'int64']).columns
+    df[num_cols] = df[num_cols].fillna(df[num_cols].mean())
     df_encoded = pd.get_dummies(df, columns=['business_type'])
     x = df_encoded.drop(columns=drop_cols)
     y = df_encoded[target_col]

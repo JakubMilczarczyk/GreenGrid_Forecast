@@ -9,20 +9,24 @@ logging.basicConfig(level=logging.INFO)
 
 PROCESSED_DIR = Path(__file__).parent.parent.parent / 'data' / 'processed'
 OUTPUT_FILE = PROCESSED_DIR / 'train_features.parquet'
+OZE_CODES = ['B11', 'B13', 'B15', 'B16', 'B17', 'B18', 'B19']
 
 def load_and_prepare_generation(path: Path) -> pl.DataFrame:
     df = pl.read_csv(path)
-    gen_df = (
-        df.group_by('timestamp')
+
+    oze_df = (
+        df.filter(pl.col('psr_code').is_in(OZE_CODES))
+          .group_by('timestamp')
           .agg(pl.col('quantity_MWh').sum().alias('actual_OZE_MWh'))
     )
-    gen_df = gen_df.with_columns([
+
+    oze_df = oze_df.with_columns([
         pl.col('timestamp')
           .str.strip_chars()
           .str.strptime(pl.Datetime)
           .dt.replace_time_zone(None)
     ])
-    return gen_df
+    return oze_df
 
 def load_and_prepare_weather(path: Path) -> pl.DataFrame:
     df = pl.read_csv(path).with_columns([
