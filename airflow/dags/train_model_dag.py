@@ -43,9 +43,14 @@ def train_model_if_needed():
         logging.info('Model already exists. Skipping training.')
         return
     try:
-        subprocess.run([sys.executable, '/opt/airflow/src/utils/trainer.py'], check=True)
+        subprocess.run([sys.executable, '/opt/airflow/src/utils/prepare_train_data.py'], check=True)
     except subprocess.CalledProcessError as e:
-        logging.error(f'Training failed with error: {e}')
+        logging.error(f'Preparing train data failed with error: {e}')
+        raise
+    try:
+        subprocess.run([sys.executable, '/opt/airflow/src/utils/train_model.py'], check=True)
+    except subprocess.CalledProcessError as e:
+        logging.error(f'Training model failed with error: {e}')
         raise
 
 with DAG(

@@ -38,7 +38,7 @@ def load_and_prepare_weather(path: Path) -> pl.DataFrame:
     return df
 
 def load_and_prepare_forecast(path: Path) -> pl.DataFrame:
-    df = pl.read_csv(path).rename({'quantity': 'forecast_total_Mwh'}).with_columns([
+    df = pl.read_csv(path).rename({'quantity': 'forecast_total_MWh'}).with_columns([
         pl.col('timestamp')
           .str.strip_chars()
           .str.strptime(pl.Datetime)
