@@ -5,18 +5,22 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from dotenv import load_dotenv
 import json
+import logging
 
-# Wczytaj klucz API z pliku .env
+# Setting up logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Loading API KEY from .env file
 load_dotenv()
 API_KEY = os.getenv("ENTSOE_API_KEY")
 
-# Stałe
+# Constants
 BASE_URL = "https://web-api.tp.entsoe.eu/api"
 DOMAIN = "10YDK-1--------W"
 RAW_DATA_DIR = Path("data/raw")
 CONFIG_FILE = Path(__file__).parent.parent.parent / "config" / "entsoe_requests.json"
 
-# Utwórz folder na dane, jeśli nie istnieje
+# Creating the raw data directory if it not exists
 RAW_DATA_DIR = Path(__file__).parent.parent.parent / "data" / "raw" 
 RAW_DATA_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -43,7 +47,7 @@ def fetch_entsoe_data(document_type: str, process_type: str) -> str:
 
 
 def main():
-    # Wczytaj konfigurację zapytań
+    # Loading queries from the configuration file
     with open(CONFIG_FILE, "r") as f:
         queries = json.load(f)
 
@@ -54,17 +58,17 @@ def main():
 
         filename = RAW_DATA_DIR / f"{name}.xml"
         if filename.exists():
-            print(f"[SKIP] {name} już istnieje.")
+            logging.info(f"[SKIP] {filename} is exists.")
             continue
 
-        print(f"[INFO] Pobieranie danych: {name}")
+        logging.info(f"Extracting data: {name}")
         try:
             xml_data = fetch_entsoe_data(document_type, process_type)
             with open(filename, "w") as f:
                 f.write(xml_data)
-            print(f"[OK] Zapisano do {filename}")
+            logging.info(f"Saved as {filename}")
         except requests.HTTPError as e:
-            print(f"[ERROR] Nie udało się pobrać danych dla {name}: {e}")
+            Logging.error(f"Data extraction filed {name}: {e}")
 
 
 if __name__ == "__main__":

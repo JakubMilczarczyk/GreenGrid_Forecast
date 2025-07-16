@@ -18,8 +18,8 @@ with DAG(
     )
 
     trigger_data_merger = TriggerDagRunOperator(
-        task_id="trigger_train_features_data_merger",
-        trigger_dag_id="train_features_data_merger"
+        task_id="trigger_merge_train_features_data",
+        trigger_dag_id="merge_train_features_data"
     )
 
     extract >> trigger_data_merger

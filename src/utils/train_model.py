@@ -110,8 +110,7 @@ def main():
         model, y_test, y_pred = train(x_train, y_train, x_test, y_test)
         
         save_model(model, MODEL_FILE)
-        
-        # y_entsoe = x_test['forecast_total_MWh']
+
         mse_benchmark = mean_squared_error(y_test, y_entsoe)
         mae_benchmark = mean_absolute_error(y_test, y_entsoe)
         model_metrics = evaluate(y_test, y_pred)
@@ -123,6 +122,7 @@ def main():
             }
         }
         save_metrics(metrics, METRICS_FILE)
+
         save_predictions(
             timestamps=timestamps,
             y_true=y_test,

@@ -6,7 +6,7 @@ from datetime import datetime
 default_args = {"start_date": datetime(2025, 5, 15)}
 
 with DAG(
-    "train_features_data_merger",
+    "merge_train_features_data",
     schedule_interval=None,
     catchup=False,
     default_args=default_args,

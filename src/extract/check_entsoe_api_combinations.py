@@ -2,6 +2,10 @@ import requests
 from datetime import datetime, timedelta
 import os
 from dotenv import load_dotenv
+import logging
+
+# Setting up logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 if __name__=="__main__":
 
@@ -32,11 +36,11 @@ if __name__=="__main__":
         try:
             r = requests.get(BASE_URL, params=params)
             if r.status_code == 200:
-                print(f"[OK] {doc}:{proc}")
+                logging.info(f"[OK] {doc}:{proc}")
             else:
-                print(f"[FAIL] {doc}:{proc} → {r.status_code}")
+                logging.info(f"[FAIL] {doc}:{proc} → {r.status_code}")
         except Exception as e:
-            print(f"[ERROR] {doc}:{proc} → {e}")
+            logging.error(f"[ERROR] {doc}:{proc} → {e}")
 
     # Test all combinations
     for doc in DOC_TYPES:

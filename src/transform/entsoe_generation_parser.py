@@ -2,21 +2,25 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 import polars as pl
 from datetime import datetime, timedelta
+import logging
 
-# Ścieżka do pliku XML
+# Setting up logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Filepath to XML
 xml_file_path = Path(__file__).parent.parent.parent / "data" / "raw"
 xml_file_path.mkdir(parents=True, exist_ok=True)
 xml_file = xml_file_path / "actual_generation.xml"
 
-# Parsowanie XML
+# Pharsing XML
 tree = ET.parse(xml_file)
 root = tree.getroot()
 
-# ENTSO-E używa przestrzeni nazw
+# ENTSO-E uses namespaces, so we need to define it
 # ns = {"ns": "urn:iec62325.351:tc57wg16:451-6:generationloaddocument:3:0"}
 ns = {"ns": root.tag.split("}")[0].strip("{")}
 
-# Mapowanie kodów PSR (Production Source)
+# Mapping psr codes (Production Source)
 psr_mapping = {
     "B01": "Fossil Brown Coal/Lignite",
     "B02": "Fossil Hard coal",
@@ -43,7 +47,7 @@ data = []
 
 if __name__=="__main__":
 
-    # Parsowanie danych
+    # Pharsing XML and extracting data
     for ts in root.findall("ns:TimeSeries", ns):
         psr_code = ts.find("ns:MktPSRType/ns:psrType", ns)
         psr_code = psr_code.text if psr_code is not None else "UNKNOWN"
@@ -63,7 +67,7 @@ if __name__=="__main__":
         elif resolution == "PT60M":
             res_minutes = 60
         else:
-            raise VaueError(f"Nieznana rozdzielczość: {resolution}")
+            raise VaueError(f"Unnown rosolution: {resolution}")
 
         for pt in period.findall("ns:Point", ns):
             pos = int(pt.find("ns:position", ns).text)
@@ -71,13 +75,14 @@ if __name__=="__main__":
             timestamp = (start_time + timedelta(minutes=(pos - 1) * res_minutes)).isoformat()
             data.append((timestamp, qty, psr_code, psr_name, business_type))
 
-    # Tworzenie DataFrame z Polars
+    # Converting to DataFrame
     df = pl.DataFrame(
         data,
         orient="row",
         schema=["timestamp", "quantity", "psr_code", "psr_name", "business_type"]
     )
 
+    # Aggregating data to hourly
     df = df.with_columns(pl.col("timestamp").cast(pl.Datetime))
     df_hourly = (
         df.group_by_dynamic("timestamp", every="1h", period="1h", group_by=["psr_code", "psr_name", "business_type"])
@@ -85,11 +90,11 @@ if __name__=="__main__":
         .sort("timestamp")
     )
 
-    # Zapis do CSV
+    # Saveing as CSV
     output_dir_path = Path(__file__).parent.parent.parent / "data" / "processed"
     output_dir_path.mkdir(parents=True, exist_ok=True)
 
     output_file_path = output_dir_path / "entsoe_actual_generation.csv"
     df_hourly.write_csv(output_file_path)
 
-    print(f"Zapisano dane do {output_file_path}")
+    logging.info(f"Data saved as: {output_file_path}")

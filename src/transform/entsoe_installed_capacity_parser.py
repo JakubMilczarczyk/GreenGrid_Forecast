@@ -2,6 +2,10 @@ import xml.etree.cElementTree as ET
 from pathlib import Path
 import polars as pl
 from datetime import datetime, timedelta
+import logging
+
+# Setting up logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 xml_files = [
     "installed_capacity_a01",
@@ -55,4 +59,4 @@ if __name__=="__main__":
     df = pl.DataFrame(data)
     df.write_csv(output_file_path)
 
-    print(f"Zapisano dane do {output_file_path}")
+    logging.info(f"Data saved as: {output_file_path}")

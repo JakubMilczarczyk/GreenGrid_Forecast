@@ -3,19 +3,24 @@ from datetime import datetime, timedelta
 from pathlib import Path
 import polars as pl
 import json
+import logging
+
+# Setting up logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 if __name__=="__main__":
 
-    # 📍 Lokalizacja – Kopenhaga (DK1)
+    # Localization – Copenhagen (DK1)
     LAT = 55.6761
     LON = 12.5683
 
-    # 🕒 Zakres czasowy
+    # Time range
     now = datetime.now()
     start = (now - timedelta(days=30)).strftime("%Y-%m-%d")
     end = (now + timedelta(days=1)).strftime("%Y-%m-%d")
 
-    # 🌦️ Parametry pogodowe
+    # Weather parameters
+    # https://open-meteo.com/en/docs
     HOURLY_PARAMS = ",".join([
         "temperature_2m",
         "cloud_cover",
@@ -37,19 +42,20 @@ if __name__=="__main__":
 
     url = "https://api.open-meteo.com/v1/forecast"
 
-    # 📡 Pobranie danych
+    # Extracting weather data
     response = requests.get(url, params=params)
     response.raise_for_status()
     weather_json = response.json()
 
-    # 📁 Zapis JSON (opcjonalnie)
+    # Saving raw data
     raw_data_path = Path(__file__).parent.parent.parent / "data" / "raw"
     raw_data_path.mkdir(parents=True, exist_ok=True)
     
     with open(raw_data_path / "weather_dk1.json", "w") as f:
         json.dump(weather_json, f, indent=2)
+        logging.info(f'Weather data saved as {raw_data_path / "weather_dk1.json"}')
 
-    # 📄 Konwersja do Polars DataFrame
+    # Converting to DataFrame
     hourly = weather_json["hourly"]
     df = pl.DataFrame({
         "timestamp": hourly["time"],
@@ -61,9 +67,9 @@ if __name__=="__main__":
         "wind_direction_10m": hourly["wind_direction_10m"]
     })
 
-    # 💾 Zapis CSV
+    # Saving processed data
     processed_data_path = Path(__file__).parent.parent.parent / "data" / "processed"
     processed_data_path.mkdir(parents=True, exist_ok=True)
     df.write_csv(processed_data_path / "weather_dk1.csv")
 
-    print("✔️ Pogoda DK1 zapisana: data/processed/weather_dk1.csv")
+    logging.info(f'Weather for DK1 saved as: {processed_data_path / "weather_dk1.csv"}')

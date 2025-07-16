@@ -30,11 +30,12 @@ services:
       - ./data/raw:/opt/airflow/data/raw
       - ./data/processed:/opt/airflow/data/processed
       - ./data/forecasts:/opt/airflow/data/forecasts
+      - ./data/splits:/opt/airflow/data/splits
       - ./models:/opt/airflow/models
       - ./config:/opt/airflow/config
     entrypoint: >
       bash -c "
-        echo '⏳ Inicjalizacja bazy danych Airflow...' &&
+        echo 'Initializing Airflow database...' &&
         airflow db init &&
         airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com
       "
@@ -65,6 +66,7 @@ services:
       - ./data/raw:/opt/airflow/data/raw
       - ./data/processed:/opt/airflow/data/processed
       - ./data/forecasts:/opt/airflow/data/forecasts
+      - ./data/splits:/opt/airflow/data/splits
       - ./models:/opt/airflow/models
       - ./config:/opt/airflow/config
     command: webserver
@@ -89,6 +91,7 @@ services:
       - ./data/raw:/opt/airflow/data/raw
       - ./data/processed:/opt/airflow/data/processed
       - ./data/forecasts:/opt/airflow/data/forecasts
+      - ./data/splits:/opt/airflow/data/splits
       - ./models:/opt/airflow/models
       - ./config:/opt/airflow/config
     command: scheduler
@@ -107,14 +110,7 @@ services:
         condition: service_healthy
     command: >
       bash -c "
-        echo '🕒 Czekam 60s na pełne uruchomienie systemu...' &&
-        sleep 30 &&
-        airflow dags unpause transform_forecast_data &&
-        airflow dags unpause transform_generation_data &&
-        airflow dags unpause extract_entsoe_data &&
-        airflow dags unpause extract_weather_data &&
-        airflow dags trigger extract_entsoe_data &&
-        airflow dags trigger extract_weather_data
+        echo 'Srevice is running, waiting for the scheduler to be healthy...'
       "
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
@@ -137,6 +133,7 @@ services:
     volumes:
       - ./app:/app/app
       - ./data:/app/data
+      - ./src:/app/src
 
 volumes:
   airflow_logs: {}
