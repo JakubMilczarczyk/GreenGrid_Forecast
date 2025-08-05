@@ -8,7 +8,7 @@ logging.basicConfig(level=logging.INFO)
 
 
 PROCESSED_DIR = Path(__file__).parent.parent.parent / 'data' / 'processed'
-OUTPUT_FILE = PROCESSED_DIR / 'train_features.parquet'
+OUTPUT_FILE = PROCESSED_DIR / 'train_features.parquet'       # TODO change to .csv
 OZE_CODES = ['B11', 'B13', 'B15', 'B16', 'B17', 'B18', 'B19']
 
 def load_and_prepare_generation(path: Path) -> pl.DataFrame:
@@ -73,7 +73,7 @@ def main():
         logging.info(f'Merged columns: {merged.columns}')
         logging.info(f'Sample:\n{merged.head()}')
 
-        merged.write_parquet(OUTPUT_FILE)
+        merged.write_parquet(OUTPUT_FILE)       # TODO change to write_csv
         logging.info(f'Features set saved as: {OUTPUT_FILE}')
     except Exception as e:
         logging.error(f'Error in merging features: {e}')

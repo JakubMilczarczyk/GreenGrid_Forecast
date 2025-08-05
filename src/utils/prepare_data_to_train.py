@@ -10,7 +10,7 @@ PROCESSED_DIR = Path(__file__).parent.parent.parent / 'data' / 'processed'
 PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
 SPLITS_DIR = Path(__file__).parent.parent.parent / 'data' / 'splits'
 SPLITS_DIR.mkdir(parents=True, exist_ok=True)
-FEATURES_FILE = PROCESSED_DIR / "train_features.parquet"
+FEATURES_FILE = PROCESSED_DIR / "train_features.parquet"        # TODO change to .csv
 X_TRAIN_FILE = SPLITS_DIR / "x_train.parquet"
 Y_TRAIN_FILE = SPLITS_DIR / "y_train.parquet"
 X_TEST_FILE = SPLITS_DIR / "x_test.parquet"
@@ -28,7 +28,7 @@ def clean_data(df: pl.DataFrame) -> pl.DataFrame:
 def main():
     """Main function to execute the data preparation process."""
     try:
-        df = pl.read_parquet(FEATURES_FILE)
+        df = pl.read_parquet(FEATURES_FILE)       # TODO change to pd.read_csv 
         df_cleaned = clean_data(df)
 
         df_full = df_cleaned.to_pandas()
@@ -50,11 +50,11 @@ def main():
         )
 
         x_train.to_parquet(X_TRAIN_FILE, index=False)
-        y_train.to_frame().to_parquet(Y_TRAIN_FILE, index=False)
-        x_test.to_parquet(X_TEST_FILE, index=False)
-        y_test.to_frame().to_parquet(Y_TEST_FILE, index=False)
-        y_entsoe_test.to_frame(name="forecast_total_MWh").to_parquet(Y_ENTSOE_FILE, index=False)
-        ts_test.to_frame(name="timestamp").to_parquet(TS_TEST_FILE, index=False)
+        y_train.to_frame().to_parquet(Y_TRAIN_FILE, index=False)        # TODO change to .scv
+        x_test.to_parquet(X_TEST_FILE, index=False)                     # TODO change to .csv
+        y_test.to_frame().to_parquet(Y_TEST_FILE, index=False)          # TODO change to .csv
+        y_entsoe_test.to_frame(name="forecast_total_MWh").to_parquet(Y_ENTSOE_FILE, index=False)    # TODO change to .scv
+        ts_test.to_frame(name="timestamp").to_parquet(TS_TEST_FILE, index=False)        # TODO change to .csv
 
         logging.info('Data preparation complete. Files saved.')
     except Exception as e:

@@ -17,11 +17,11 @@ METRICS_DIR = Path(__file__).parent.parent.parent / 'models' / 'metrics'
 METRICS_DIR.mkdir(parents=True, exist_ok=True)
 FORECASTS_DIR = Path(__file__).parent.parent.parent / "data" / "forecasts"
 FORECASTS_DIR.mkdir(parents=True, exist_ok=True)
-PREDICTIONS_FILE = FORECASTS_DIR / "model_predictions.parquet"
+PREDICTIONS_FILE = FORECASTS_DIR / "model_predictions.parquet"  # TODO change to .csv
 MODEL_FILE = MODEL_DIR / 'linear_regression_model.joblib'
 METRICS_FILE = METRICS_DIR / 'linear_regression_model_metrics.json'
-Y_ENTSOE_FILE = SPLITS_DIR / "y_entsoe.parquet"
-TIMESTAMPS_FILE = SPLITS_DIR / "timestamps.parquet"
+Y_ENTSOE_FILE = SPLITS_DIR / "y_entsoe.parquet"         # TODO change to .csv
+TIMESTAMPS_FILE = SPLITS_DIR / "timestamps.parquet"     # TODO change to .csv
 
 def load_data(
     x_train_file: Path,
@@ -31,8 +31,8 @@ def load_data(
     y_entsoe_file: Path,
     timestamps_file: Path
     ) -> tuple:
-    """Loads training data from parquet files."""
-    x_train = pd.read_parquet(x_train_file)
+    """Loads training data from parquet files."""       # TODO change to .csv for all
+    x_train = pd.read_parquet(x_train_file) 
     y_train = pd.read_parquet(y_train_file).squeeze()
     x_test = pd.read_parquet(x_test_file)
     y_test = pd.read_parquet(y_test_file).squeeze()
@@ -89,13 +89,13 @@ def save_predictions(
         'y_model': y_model,
         'y_entsoe': y_entsoe
     })
-    df.to_parquet(predictions_file, index=False)
+    df.to_parquet(predictions_file, index=False)    # TODO change to .csv
     logging.info(f'Predictions saved to {predictions_file}')
 
 def main():
     """Main function to execute the training process."""
     try:
-        x_train_file = SPLITS_DIR / "x_train.parquet"
+        x_train_file = SPLITS_DIR / "x_train.parquet"   # TODO change to .csv for all
         y_train_file = SPLITS_DIR / "y_train.parquet"
         x_test_file = SPLITS_DIR / "x_test.parquet"
         y_test_file = SPLITS_DIR / "y_test.parquet"
