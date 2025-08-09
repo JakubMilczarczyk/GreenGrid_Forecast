@@ -2,22 +2,53 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 from pathlib import Path
+import requests
 import sys
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
-# Dodaj src/ do sys.path
+AIRFLOW_API_BASE_URL = "http://localhost:8080/api/v1"
+AIRFLOW_USERNAME = "airflow"
+AIRFLOW_PASSWORD = "airflow"
+
+def trigger_dag(dag_id: str):
+    """Trigger an Airflow DAG."""
+    from requests.auth import HTTPBasicAuth
+
+    url = f"{AIRFLOW_API_BASE_URL}/dags/{dag_id}/dagRuns"
+    response = requests.post(
+        url,
+        auth=HTTPBasicAuth(AIRFLOW_USERNAME, AIRFLOW_PASSWORD),
+        json={"conf": {}}
+        )
+    return response
+    
+# Add src/ to sys.path
 sys.path.append(str(Path(__file__).parent.parent / "src"))
 from utils.forecast_utils import load_data_and_predictions
 
-# ---- Tytuł i opis ----
-st.title("GreenGrid Forecast")
+# Title and info
+st.title("GreenGrid Forecast - Pipeline Comparison")
 st.info("Compare model forecast with ENTSO-E benchmark and actual OZE production")
 
-# ---- Wczytanie danych ----
+# Trigger ETL Pipeline
+if st.button("Download Data (ETL)"):
+    with st.spinner("Triggering ETL Pipeline..."):
+        response = trigger_dag("etl_pipeline")
+        st.success(f"Download started! {response.status_code}")
+        st.json(response.json())
+
+if st.button("Train Model"):
+    with st.spinner("Training model..."):
+        response = trigger_dag("train_model_pipeline")
+        st.success(f"Model training started! {response.status_code}")
+        st.json(response.json())
+
+
+# Load Data 
 timestamps, y_true, y_entsoe, y_model = load_data_and_predictions()
 timestamps = pd.to_datetime(timestamps)
 
-# ---- Ramka danych ----
+# Data Frame 
 df = pd.DataFrame({
     "timestamp": timestamps,
     "true": y_true,
@@ -25,7 +56,11 @@ df = pd.DataFrame({
     "model": y_model
 })
 
-# ---- Metryki ----
+if len(df) == 0:
+    st.warning("Brak danych do wyświetlenia. Najpierw uruchom ETL i trening modelu.")
+    st.stop()
+
+# Metrics
 st.subheader("Forecast Metrics Comparison")
 
 mse_model = mean_squared_error(df["true"], df["model"])
@@ -48,18 +83,18 @@ with col2:
     st.metric("MSE", f"{mse_entsoe:.2f}")
     st.metric("MAE", f"{mae_entsoe:.2f}")
 
-# ---- Wykres interaktywny dla wybranego dnia ----
+# Interactiv chart for chosen day
 st.subheader("Forecast Comparison Chart")
 
-# Wybór dnia z dostępnych timestampów
+# Choice of date
 available_days = sorted(df['timestamp'].dt.date.unique())
 selected_day = st.selectbox("Select a date to display", available_days)
 
-# Filtrowanie danych tylko z wybranego dnia
+# Filter data for the selected day
 mask = df['timestamp'].dt.date == selected_day
 df_day = df[mask]
 
-# Wykres interaktywny (Plotly)
+# Interactive chart (Plotly)
 fig = go.Figure()
 fig.add_trace(go.Bar(x=df_day["timestamp"], y=df_day["true"], name='Actual OZE'))
 fig.add_trace(go.Bar(x=df_day["timestamp"], y=df_day["entsoe"], name='ENTSO-E Forecast'))

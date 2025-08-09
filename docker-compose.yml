@@ -54,6 +54,7 @@ services:
       AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "false"
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
       AIRFLOW__CORE__REMOTE_LOGGING: "false"
+      AIRFLOW__API__AUTH_BACKEND: airflow.api.auth.backend.basic_auth
     ports:
       - "8080:8080"
     env_file:
