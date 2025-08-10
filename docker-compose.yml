@@ -1,69 +1,172 @@
-version: "3.8"
+# version: "3.8"
+
+# services:
+#   postgres:
+#     image: postgres:14
+#     environment:
+#       POSTGRES_USER: airflow
+#       POSTGRES_PASSWORD: airflow
+#       POSTGRES_DB: airflow
+#     ports:
+#       - "5432:5432"
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+
+#   airflow-webserver:
+#     build:
+#       context: ./airflow
+#       dockerfile: Dockerfile
+#     depends_on:
+#       - postgres
+#     environment:
+#       AIRFLOW__CORE__EXECUTOR: LocalExecutor
+#       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+#       AIRFLOW__API__AUTH_BACKEND: airflow.api.auth.backend.basic_auth
+#     ports:
+#       - "8080:8080"
+#     volumes:
+#       - ./airflow/dags:/opt/airflow/dags
+#       - ./data:/opt/airflow/data
+#       - ./models:/opt/airflow/models
+#       - ./config:/opt/airflow/config
+
+#   airflow-scheduler:
+#     build:
+#       context: ./airflow
+#       dockerfile: Dockerfile
+#     depends_on:
+#       - postgres
+#     environment:
+#       AIRFLOW__CORE__EXECUTOR: LocalExecutor
+#       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+#     volumes:
+#       - ./airflow/dags:/opt/airflow/dags
+#       - ./data:/opt/airflow/data
+#       - ./models:/opt/airflow/models
+#       - ./config:/opt/airflow/config
+
+#   prediction-service:
+#     build:
+#       context: ./prediction_service
+#       dockerfile: Dockerfile
+#     ports:
+#       - "8000:8000"
+#     volumes:
+#       - ./models:/app/models
+#       - ./data:/app/data
+
+#   ui:
+#     build:
+#       context: ./ui
+#       dockerfile: Dockerfile
+#     ports:
+#       - "8501:8501"
+#     volumes:
+#       - ./data:/app/data
+#       - ./models:/app/models
+
+# volumes:
+#   postgres_data:
+
 
 services:
   postgres:
     image: postgres:14
+    container_name: airflow_postgres
     environment:
       POSTGRES_USER: airflow
       POSTGRES_PASSWORD: airflow
       POSTGRES_DB: airflow
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - greengrid_net
 
   airflow-webserver:
-    build:
-      context: ./airflow
-      dockerfile: Dockerfile
+    image: apache/airflow:2.9.3
+    container_name: airflow_webserver
+    restart: always
     depends_on:
       - postgres
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
-      AIRFLOW__API__AUTH_BACKEND: airflow.api.auth.backend.basic_auth
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY}
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW_SECRET_KEY}
+      AIRFLOW__WEBSERVER__WORKERS: 2
+      _PIP_ADDITIONAL_REQUIREMENTS: ""
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/dags/utils/transform:/opt/airflow/dags/utils/transform
+      - ./airflow/dags/utils/extract:/opt/airflow/dags/utils/extract
+      - ./airflow/dags/utils/train:/opt/airflow/dags/utils/train
+      - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/plugins:/opt/airflow/plugins
+      - ./data:/opt/airflow/data
+      - ./models:/opt/airflow/models
+      - ./scripts:/opt/airflow/scripts
+      - ./airflow/requirements.txt:/requirements.txt
     ports:
       - "8080:8080"
-    volumes:
-      - ./airflow/dags:/opt/airflow/dags
-      - ./data:/opt/airflow/data
-      - ./models:/opt/airflow/models
-      - ./config:/opt/airflow/config
+    command: webserver
+    networks:
+      - greengrid_net
 
   airflow-scheduler:
-    build:
-      context: ./airflow
-      dockerfile: Dockerfile
+    image: apache/airflow:2.9.3
+    container_name: airflow_scheduler
+    restart: always
     depends_on:
       - postgres
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY}
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
     volumes:
       - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/dags/utils/transform:/opt/airflow/dags/utils/transform
+      - ./airflow/dags/utils/extract:/opt/airflow/dags/utils/extract
+      - ./airflow/dags/utils/train:/opt/airflow/dags/utils/train
+      - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/plugins:/opt/airflow/plugins
       - ./data:/opt/airflow/data
       - ./models:/opt/airflow/models
-      - ./config:/opt/airflow/config
+      - ./scripts:/opt/airflow/scripts
+    command: scheduler
+    networks:
+      - greengrid_net
 
-  prediction-service:
+  fastapi:
     build:
       context: ./prediction_service
-      dockerfile: Dockerfile
-    ports:
-      - "8000:8000"
+    container_name: prediction_service
+    restart: always
     volumes:
       - ./models:/app/models
       - ./data:/app/data
+    ports:
+      - "8000:8000"
+    networks:
+      - greengrid_net
 
-  ui:
+  streamlit:
     build:
       context: ./ui
-      dockerfile: Dockerfile
+    container_name: streamlit_ui
+    restart: always
     ports:
       - "8501:8501"
     volumes:
-      - ./data:/app/data
-      - ./models:/app/models
+      - ./ui:/app
+    networks:
+      - greengrid_net
+    depends_on:
+      - fastapi
 
 volumes:
   postgres_data:
+
+networks:
+  greengrid_net:

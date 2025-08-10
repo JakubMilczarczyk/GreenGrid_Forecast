@@ -1,0 +1,1 @@
+"""funkcje do komunikacji z API i formatowania wyników."""

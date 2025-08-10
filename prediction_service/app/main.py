@@ -1,0 +1,1 @@
+"""to będzie FastAPI z /predict i opcjonalnie /health"""

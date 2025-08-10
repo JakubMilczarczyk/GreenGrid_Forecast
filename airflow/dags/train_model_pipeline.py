@@ -14,12 +14,12 @@ with DAG(
 ) as dag:
     prepare_data_to_train = BashOperator(
         task_id="prepare_data_to_train",
-        bash_command="python /opt/airflow/src/utils/prepare_data_to_train.py"
+        bash_command="python /opt/airflow/dags/utils/prepare_data_to_train.py"
     )
 
     train_model = BashOperator(
         task_id="train_and_save_model",
-        bash_command="python /opt/airflow/src/utils/train_model.py"
+        bash_command="python /opt/airflow/dags/utils/train_model.py"
     )
 
     [prepare_data_to_train] >> train_model

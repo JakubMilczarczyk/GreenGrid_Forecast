@@ -1,0 +1,1 @@
+"""definicje request/response Pydantic."""

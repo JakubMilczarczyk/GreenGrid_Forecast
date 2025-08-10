@@ -1,0 +1,1 @@
+"""pingowanie /predict i sprawdzanie odpowiedzi."""
