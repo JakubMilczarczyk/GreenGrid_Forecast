@@ -1,4 +1,5 @@
 import logging
+import os
 from pathlib import Path
 import json
 import joblib
@@ -8,14 +9,18 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
+# Set up logging
 logging.basicConfig(level=logging.INFO)
 
-SPLITS_DIR = Path(__file__).parent.parent.parent / 'data' / 'splits'
-MODEL_DIR = Path(__file__).parent.parent.parent / 'models' / 'saved_models'
+# constants for directories and files
+DATA_DIR = Path(os.getenv('DATA_DIR', '/opt/airflow/data'))
+MODELS_DIR = Path(os.getenv('MODELS_DIR', '/opt/airflow/models'))
+SPLITS_DIR = DATA_DIR / 'splits'
+MODEL_DIR = MODELS_DIR / 'saved_models'
 MODEL_DIR.mkdir(parents=True, exist_ok=True)
-METRICS_DIR = Path(__file__).parent.parent.parent / 'models' / 'metrics'
+METRICS_DIR = MODELS_DIR / 'metrics'
 METRICS_DIR.mkdir(parents=True, exist_ok=True)
-FORECASTS_DIR = Path(__file__).parent.parent.parent / "data" / "forecasts"
+FORECASTS_DIR = DATA_DIR / "forecasts"
 FORECASTS_DIR.mkdir(parents=True, exist_ok=True)
 PREDICTIONS_FILE = FORECASTS_DIR / "model_predictions.parquet"  # TODO change to .csv
 MODEL_FILE = MODEL_DIR / 'linear_regression_model.joblib'

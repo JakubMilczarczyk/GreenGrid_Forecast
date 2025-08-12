@@ -7,6 +7,13 @@ import logging
 # Setting up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
+# constants
+DATA_DIR = Path(__file__).parent.parent.parent / "data" / "raw"
+RAW_DATA_DIR = DATA_DIR / "raw"
+RAW_DATA_DIR.mkdir(parents=True, exist_ok=True)
+OUTPUT_DATA_DIR = DATA_DIR / "processed"
+OUTPUT_DATA_DIR.mkdir(parents=True, exist_ok=True)
+
 xml_files = [
     "installed_capacity_a01",
     ]
@@ -40,23 +47,18 @@ def parse_xml_file(root: ET.Element, ns: dict):
             })
 
 if __name__=="__main__":
-    # path to XML files
-    xml_file_path = Path(__file__).parent.parent.parent / "data" / "raw"
-    xml_file_path.mkdir(parents=True, exist_ok=True)
-    output_dir_path = Path(__file__).parent.parent.parent / "data" / "processed"
-    output_dir_path.mkdir(parents=True, exist_ok=True)
 
     data = []
 
     for file in xml_files:
-        tree = ET.parse(xml_file_path / (file + ".xml"))
+        tree = ET.parse(RAW_DATA_DIR / (file + ".xml"))
         root = tree.getroot()
         
         parse_xml_file(root, ns)
 
-    output_file_path = output_dir_path / "prices.csv"
+    OUTPUT_FILE_PATH = OUTPUT_DATA_DIR / "prices.csv"
 
     df = pl.DataFrame(data)
-    df.write_csv(output_file_path)
+    df.write_csv(OUTPUT_FILE_PATH)
 
-    logging.info(f"Data saved as: {output_file_path}")
+    logging.info(f"Data saved as: {OUTPUT_FILE_PATH}")

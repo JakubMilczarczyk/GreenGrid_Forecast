@@ -1,14 +1,18 @@
 import logging
+import os
 from pathlib import Path
 import polars as pl
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
+# Configure logging
 logging.basicConfig(level=logging.INFO)
 
-PROCESSED_DIR = Path(__file__).parent.parent.parent / 'data' / 'processed'
+# Constants for file paths
+DATA_DIR = Path(os.getenv('DATA_DIR', '/opt/airflow/data'))
+PROCESSED_DIR = DATA_DIR / 'processed'
 PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
-SPLITS_DIR = Path(__file__).parent.parent.parent / 'data' / 'splits'
+SPLITS_DIR = DATA_DIR / 'splits'
 SPLITS_DIR.mkdir(parents=True, exist_ok=True)
 FEATURES_FILE = PROCESSED_DIR / "train_features.parquet"        # TODO change to .csv
 X_TRAIN_FILE = SPLITS_DIR / "x_train.parquet"

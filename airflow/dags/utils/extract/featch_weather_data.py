@@ -1,6 +1,7 @@
 import requests
 from datetime import datetime, timedelta
 import polars as pl
+from pathlib import Path
 import json
 import logging
 import os
@@ -8,9 +9,9 @@ import os
 # Setting up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-DATA_DIR = os.getenv("DATA_DIR", "/opt/shared/data")
-RAW_DATA_DIR = os.path.join(DATA_DIR, "raw")
-PROCESSED_DATA_DIR = os.path.join(DATA_DIR, "processed")
+DATA_DIR = Path(os.getenv("DATA_DIR", "/opt/airflow/shared/data"))
+RAW_DATA_DIR = DATA_DIR / "raw"
+PROCESSED_DATA_DIR = DATA_DIR / "processed"
 
 if __name__=="__main__":
 

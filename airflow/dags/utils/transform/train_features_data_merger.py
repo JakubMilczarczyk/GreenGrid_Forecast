@@ -1,14 +1,19 @@
 """Script to merge all datasets to one and save it to parquete"""
 
 import logging
+import os
 from pathlib import Path
 import polars as pl
 
 logging.basicConfig(level=logging.INFO)
 
+# Constants
+DATA_DIR = Path(os.getenv("DATA_DIR", "/opt/airflow/shared/data"))
+PROCESSED_DIR = DATA_DIR / "processed"
+if not os.path.exists(PROCESSED_DIR):
+    os.makedirs(PROCESSED_DIR)
 
-PROCESSED_DIR = Path(__file__).parent.parent.parent / 'data' / 'processed'
-OUTPUT_FILE = PROCESSED_DIR / 'train_features.parquet'       # TODO change to .csv
+OUTPUT_FILE_PATH = os.path.join(PROCESSED_DIR, 'train_features.parquet')       # TODO change to .csv
 OZE_CODES = ['B11', 'B13', 'B15', 'B16', 'B17', 'B18', 'B19']
 
 def load_and_prepare_generation(path: Path) -> pl.DataFrame:
@@ -73,8 +78,8 @@ def main():
         logging.info(f'Merged columns: {merged.columns}')
         logging.info(f'Sample:\n{merged.head()}')
 
-        merged.write_parquet(OUTPUT_FILE)       # TODO change to write_csv
-        logging.info(f'Features set saved as: {OUTPUT_FILE}')
+        merged.write_parquet(OUTPUT_FILE_PATH)       # TODO change to write_csv
+        logging.info(f'Features set saved as: {OUTPUT_FILE_PATH}')
     except Exception as e:
         logging.error(f'Error in merging features: {e}')
         raise

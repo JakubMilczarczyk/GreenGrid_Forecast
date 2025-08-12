@@ -1,4 +1,5 @@
 import xml.etree.ElementTree as ET
+import os
 from pathlib import Path
 import polars as pl
 from datetime import datetime, timedelta
@@ -8,19 +9,20 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Paths for XML input and CSV output
-xml_dir_path = Path(__file__).parent.parent.parent / "data" / "raw"
-xml_dir_path.mkdir(parents=True, exist_ok=True)
-xml_path = xml_dir_path / "generation_forecast.xml"
+DATA_DIR = Path(os.getenv("DATA_DIR", "/opt/airflow/shared/data"))
+XML_DIR = DATA_DIR / "raw"
+XML_DIR.mkdir(parents=True, exist_ok=True)
+XML_FILE_PATH = XML_DIR / "generation_forecast.xml"
 
-output_csv_dir = Path(__file__).parent.parent.parent / "data" / "processed"
-output_csv_dir.mkdir(parents=True, exist_ok=True)
-output_csv = output_csv_dir / "forecast_generation_total.csv"
+OUTPUT_DIR = DATA_DIR / "processed"
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+OUTPUT_FILE_PATH = OUTPUT_DIR / "forecast_generation_total.csv"
 
 ns = {"ns": "urn:iec62325.351:tc57wg16:451-6:generationloaddocument:3:0"}
 
 if __name__=="__main__":
 
-    tree = ET.parse(xml_path)
+    tree = ET.parse(XML_FILE_PATH)
     root = tree.getroot()
 
     data = []
@@ -42,6 +44,6 @@ if __name__=="__main__":
 
     # Save CSV
     df = pl.DataFrame(data, orient="row", schema=["timestamp", "quantity", "business_type"])
-    df.write_csv(output_csv)
+    df.write_csv(OUTPUT_FILE_PATH)
 
-    logging.info(f"Agregated forecast data saved as: {output_csv}")
+    logging.info(f"Agregated forecast data saved as: {OUTPUT_FILE_PATH}")

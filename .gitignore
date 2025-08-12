@@ -1,72 +1,80 @@
-# ---------------------------
-# Python
-# ---------------------------
+# This is a .gitignore file for the GreenGridForecast project.
+# Python cache
 __pycache__/
 *.py[cod]
+*.pyo
+*.pyd
 *.pyc
-*.egg
-*.egg-info/
-dist/
-build/
-.eggs/
 
-# ---------------------------
-# Virtual Environment
-# ---------------------------
-.venv/
-env/
-venv/
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
 
-# ---------------------------
-# Poetry
-# ---------------------------
-# poetry.lock
-
-# ---------------------------
-# Jupyter / Notebooks
-# ---------------------------
-.ipynb_checkpoints/
-
-# ---------------------------
-# Airflow
-# ---------------------------
-airflow/airflow.db
-airflow/airflow.cfg
-airflow/unittests.cfg
-airflow/tmp/
-airflow/.env
-airflow/logs/
-dags/__pycache__
-dags/*.pyc
-dag_processor_manager_pid.txt
-
-# ---------------------------
-# Docker
-# ---------------------------
-*.log
-*.pid
-docker-compose.override.yml
-
-# ---------------------------
-# Data (local data files)
-# ---------------------------
-data/raw/
-data/processed/
-data/splits/
-data/forecasts/
-notes/*
-*.env
-
-# ---------------------------
-# Modes (local models files)
-# ---------------------------
-models/saved_models/
-models/metrics/
-
-# ---------------------------
-# IDE / OS pliki
-# ---------------------------
+# VSCode settings
 .vscode/
-.idea/
+*.code-workspace
+
+# OS files
 .DS_Store
 Thumbs.db
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Poetry
+poetry.lock
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Airflow logs, configs, and SQLite DB
+airflow/logs/
+airflow/airflow.db
+airflow/unittests.cfg
+airflow/webserver_config.py
+
+# Docker
+*.pid
+*.log
+docker-compose.override.yml
+
+# Data and models (keep only if you want to version control some samples)
+!data/README.md
+!models/README.md
+shared/config/
+shared/data/forecasts/
+shared/data/processed/
+shared/data/raw/
+shared/data/spits/
+shared/models/metrics/
+shared/models/saved_models/
+shared/models/versions/
+notes/
+
+# Prediction service cache
+prediction_service/data/
+prediction_service/models/
+
+# Streamlit cache
+.ui/
+.streamlit/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Test artifacts
+htmlcov/
+.coverage
+.tox/
+.pytest_cache/
+
+# Misc
+*.bak
+*.swp
+*.swo

@@ -1,4 +1,5 @@
 import xml.etree.ElementTree as ET
+import os
 from pathlib import Path
 import polars as pl
 from datetime import datetime, timedelta
@@ -7,13 +8,16 @@ import logging
 # Setting up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# Filepath to XML
-xml_file_path = Path(__file__).parent.parent.parent / "data" / "raw"
-xml_file_path.mkdir(parents=True, exist_ok=True)
-xml_file = xml_file_path / "actual_generation.xml"
+# constants
+DATA_DIR = Path(os.getenv("DATA_DIR", "/opt/airflow/shared/data"))
+RAW_DATA_DIR = DATA_DIR / "raw"
+RAW_FILE_PATH = RAW_DATA_DIR / "actual_generation.xml"
+
+OUTPUT_DIR = DATA_DIR / "processed"
+PROCESSED_FILE_PATH = OUTPUT_DIR / "entsoe_actual_generation.csv"
 
 # Pharsing XML
-tree = ET.parse(xml_file)
+tree = ET.parse(RAW_FILE_PATH)
 root = tree.getroot()
 
 # ENTSO-E uses namespaces, so we need to define it
@@ -91,10 +95,6 @@ if __name__=="__main__":
     )
 
     # Saveing as CSV
-    output_dir_path = Path(__file__).parent.parent.parent / "data" / "processed"
-    output_dir_path.mkdir(parents=True, exist_ok=True)
+    df_hourly.write_csv(PROCESSED_FILE_PATH)
 
-    output_file_path = output_dir_path / "entsoe_actual_generation.csv"
-    df_hourly.write_csv(output_file_path)
-
-    logging.info(f"Data saved as: {output_file_path}")
+    logging.info(f"Data saved as: {PROCESSED_FILE_PATH}")

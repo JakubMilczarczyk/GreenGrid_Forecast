@@ -17,10 +17,10 @@ API_KEY = os.getenv("ENTSOE_API_KEY")
 # Constants
 BASE_URL = "https://web-api.tp.entsoe.eu/api"
 DOMAIN = "10YDK-1--------W"
-DATA_DIR = Path(os.getenv("DATA_DIR", "/opt/shared/data"))
+DATA_DIR = Path(os.getenv("DATA_DIR", "/opt/airflow/shared/data"))
 RAW_DATA_DIR = DATA_DIR / "raw"
 RAW_DATA_DIR.mkdir(parents=True, exist_ok=True)
-CONFIG_FILE = os.getenv("CONFIG_DIR", "/opt/shared/config") + "/entsoe_requests.json"
+CONFIG_FILE = Path(os.getenv("CONFIG_DIR", "/opt/airflow/shared/config") + "/entsoe_requests.json")
 
 
 def fetch_entsoe_data(document_type: str, process_type: str) -> str:

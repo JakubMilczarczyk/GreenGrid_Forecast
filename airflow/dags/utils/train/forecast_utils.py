@@ -1,8 +1,9 @@
-from pathlib import Path
+import os
 import pandas as pd
 
-SPLITS_DIR = Path(__file__).parent.parent.parent / "data" / "splits"
-FORECASTS_FILE = Path(__file__).parent.parent.parent / "data" / "forecasts" / "model_predictions.parquet"   # TODO change to .csv
+# Constants
+DATA_DIR = os.getenv("DATA_DIR", "/opt/airflow/shared/data")
+FORECASTS_FILE = os.path.join(DATA_DIR, "forecasts", "model_predictions.parquet")  # TODO change to .csv
 
 def load_data_and_predictions():
     """Loads model predictions and ground truth."""
