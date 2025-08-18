@@ -1,6 +1,7 @@
 import logging
 import os
 from pathlib import Path
+import sys
 import polars as pl
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -63,6 +64,7 @@ def main():
         logging.info('Data preparation complete. Files saved.')
     except Exception as e:
         logging.error(f'Error during data preparation: {e}')
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()

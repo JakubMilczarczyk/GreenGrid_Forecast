@@ -1,6 +1,7 @@
 import logging
 import os
 from pathlib import Path
+import sys
 import json
 import joblib
 import polars as pl
@@ -80,22 +81,22 @@ def save_metrics(metrics: dict, metrics_file: Path) -> None:
     df.to_csv(metrics_file.with_suffix('.csv'), index=False)
     logging.info(f'Metrics saved to {metrics_file}')
 
-def save_predictions(
-        timestamps: pd.Series,
-        y_true: pd.Series,
-        y_model: pd.Series,
-        y_entsoe: pd.Series,
-        predictions_file: Path
-    ) -> None:
-    """Saves the predictions to a file."""
-    df = pd.DataFrame({
-        'timestamp': timestamps,
-        'y_true': y_true,
-        'y_model': y_model,
-        'y_entsoe': y_entsoe
-    })
-    df.to_parquet(predictions_file, index=False)    # TODO change to .csv
-    logging.info(f'Predictions saved to {predictions_file}')
+# def save_predictions(
+#         timestamps: pd.Series,
+#         y_true: pd.Series,
+#         y_model: pd.Series,
+#         y_entsoe: pd.Series,
+#         predictions_file: Path
+#     ) -> None:
+#     """Saves the predictions to a file."""
+#     df = pd.DataFrame({
+#         'timestamp': timestamps,
+#         'y_true': y_true,
+#         'y_model': y_model,
+#         'y_entsoe': y_entsoe
+#     })
+#     df.to_parquet(predictions_file, index=False)    # TODO change to .csv
+#     logging.info(f'Predictions saved to {predictions_file}')
 
 def main():
     """Main function to execute the training process."""
@@ -126,18 +127,20 @@ def main():
                 'mae': mae_benchmark
             }
         }
-        save_metrics(metrics, METRICS_FILE)
+        # save_metrics(metrics, METRICS_FILE)
 
-        save_predictions(
-            timestamps=timestamps,
-            y_true=y_test,
-            y_model=y_pred,
-            y_entsoe=y_entsoe, 
-            predictions_file=PREDICTIONS_FILE
-        )
+        # save_predictions(
+        #     timestamps=timestamps,
+        #     y_true=y_test,
+        #     y_model=y_pred,
+        #     y_entsoe=y_entsoe, 
+        #     predictions_file=PREDICTIONS_FILE
+        # )
 
     except Exception as e:
         logging.error(f'Error during model training: {e}')
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
+    

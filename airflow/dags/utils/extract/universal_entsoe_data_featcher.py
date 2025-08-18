@@ -1,5 +1,6 @@
 import os
 import requests
+import sys
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -67,6 +68,7 @@ def main():
             logging.info(f"Saved as {filename}")
         except requests.HTTPError as e:
             Logging.error(f"Data extraction filed {name}: {e}")
+            sys.exit(1)
 
 
 if __name__ == "__main__":
