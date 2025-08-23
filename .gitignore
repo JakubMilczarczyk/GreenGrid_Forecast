@@ -49,7 +49,7 @@ shared/config/
 shared/data/forecasts/
 shared/data/processed/
 shared/data/raw/
-shared/data/spits/
+shared/data/splits/
 shared/models/metrics/
 shared/models/saved_models/
 shared/models/versions/
