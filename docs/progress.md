@@ -32,3 +32,28 @@
   - Prognozy zapisywane w `forecasts/latest_forecast.parquet`.
   - Dodano walidację istnienia modelu i danych (`check_model`, `check_data`).
 - Zidentyfikowano problem ze ścieżkami w Dockerze, potwierdzono poprawne montowanie katalogów `shared/data/splits`.
+
+### Kolejne kroki
+1. UI Streamlit – MVP + wczytywanie danych i wykres.
+2. Kolejne 1–2 dni: Integracja z Airflow API → przycisk triggerowania prognozy.
+3. Następnie: Mapa architektury + diagram przepływu danych.
+4. Na koniec: Prezentacja w PowerPoint / Google Slides.
+
+## Data: 2025-08-24
+
+### Wykonane działania
+- Uruchomiono nowy serwis Prediction Service w kontenerze Docker.
+- Dockerfile został zmodyfikowany pod kątem instalacji zależności i zgodności z `.env`.
+- Stworzono szablony plików `main.py`, `config.py` i struktury aplikacji zgodnie z zasadami clean code i SOLID.
+- Serwis jest przygotowany do komunikacji REST, z logowaniem i możliwością podłączenia do UI Streamlit.
+
+### Aktualny status
+- Serwis Prediction Service startuje, ale pada z powodu problemu z brakującą lub niepoprawną zależnością FastAPI w `main.py`.
+- Zależności Python/Poetry wymagają weryfikacji i poprawnej instalacji w kontenerze.
+- Ścieżki montowanych folderów są prawidłowe i kontener widzi pliki z shared **SPRAWDZIĆ**
+
+### Kolejne kroki
+1. Naprawić problem z zależnością FastAPI w serwisie Prediction Service (sprawdzenie `requirements.txt` lub instalacja poprzez Poetry).
+2. Zweryfikować instalację wszystkich zależności w Dockerfile (poetry/native lub generowanie `requirements.txt`).
+3. Przetestować działanie endpointów REST (`/predict`, `/health`) po poprawnej instalacji zależności.
+4. Po stabilizacji serwisu uruchomić UI Streamlit, które będzie odpytywało Prediction Service i prezentowało prognozy.
