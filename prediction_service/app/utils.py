@@ -1,5 +1,5 @@
 import os
-from app.config import logger
+from config import logger
 
 def validate_path(path: str) -> str:
     if not os.path.exists(path):

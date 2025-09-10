@@ -1,6 +1,6 @@
 import logging
 from pathlib import Path
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     data_dir: Path
@@ -20,7 +20,7 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 
-logger = logging.getlogger('prediction-service')
+logger = logging.getLogger('prediction-service')
 
 logger.info('Loaded settings:')
 logger.info(f'DATA_DIR={settings.data_dir}')

@@ -1,7 +1,7 @@
 import joblib
 from pathlib import Path
 import numpy as np
-from app.config import logger
+from config import logger
 
 
 class ModelService:

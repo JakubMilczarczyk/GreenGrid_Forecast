@@ -72,24 +72,26 @@ services:
         --role Admin \
         --email admin@example.com || true"
 
-  prediction-service:
-    build:
-      context: .
-      dockerfile: prediction_service/Dockerfile
-    env_file: 
-      - .env
-    environment:
-      - DATA_DIR=/opt/shared/data
-      - MODELS_DIR=/opt/shared/models
-      - CONFIG_DIR=/opt/shared/config
-    volumes:
-      - ./shared/data:${DATA_DIR}
-      - ./shared/models:${MODELS_DIR}
-      - ./shared/config:${CONFIG_DIR}
-    ports:
-      - '${SERVICE_PORT}:8000'
-    depends_on:
-      - airflow-webserver
+  # Opcjonalny serwis prediction (odkomentuj gdy zrobisz działający develop i UI)
+  # prediction-service:
+  #   build:
+  #     context: .
+  #     dockerfile: prediction_service/Dockerfile
+  #   env_file: 
+  #     - .env
+  #   environment:
+  #     - DATA_DIR=/opt/shared/data
+  #     - MODELS_DIR=/opt/shared/models
+  #     - CONFIG_DIR=/opt/shared/config
+  #   volumes:
+  #     - ./prediction_service/app:/opt/app/
+  #     - ./shared/data:${DATA_DIR}
+  #     - ./shared/models:${MODELS_DIR}
+  #     - ./shared/config:${CONFIG_DIR}
+  #   ports:
+  #     - '${SERVICE_PORT}:8000'
+  #   depends_on:
+  #     - airflow-webserver
 
 volumes:
   postgres_data:

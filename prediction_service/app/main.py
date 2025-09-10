@@ -1,7 +1,7 @@
-from fastapi import FastAPI
-from app.config import settings, logger
-from app.models import ModelService
-from app.schemas import PredictionRequest, PredictionResponse
+from fastapi import FastAPI, HTTPException
+from config import settings, logger
+from models import ModelService
+from schemas import PredictionRequest, PredictionResponse
 
 app = FastAPI(
     title='Prediction Service',
