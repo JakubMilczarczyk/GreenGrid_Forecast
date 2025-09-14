@@ -4,6 +4,7 @@ import logging
 import os
 from pathlib import Path
 import polars as pl
+from utils.schema_validator import validate_df 
 
 logging.basicConfig(level=logging.INFO)
 
@@ -75,6 +76,8 @@ def main():
         forecast_df = load_and_prepare_forecast(forecast_total_generation)
 
         merged = merge_features(weather_df, forecast_df, oze_df)
+
+        validate_df(merged, "train_features.json")
         logging.info(f'Merged columns: {merged.columns}')
         logging.info(f'Sample:\n{merged.head()}')
 

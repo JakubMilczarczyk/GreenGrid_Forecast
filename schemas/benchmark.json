@@ -1,0 +1,4 @@
+{
+  "timestamp": "datetime64[us]",
+  "forecast_total_MWh": "float64"
+}

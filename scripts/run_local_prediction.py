@@ -1,1 +1,0 @@
-"""szybki test predykcji bez odpalania całego API."""

@@ -1,0 +1,15 @@
+{
+  "timestamp": "datetime64[us]",
+  "temperature_2m": "float64",
+  "cloud_cover": "int64",
+  "shortwave_radiation": "float64",
+  "wind_speed_10m": "float64",
+  "wind_speed_100m": "float64",
+  "wind_direction_10m": "int64",
+  "forecast_total_MWh": "float64",
+  "business_type": "string",
+  "actual_OZE_MWh": "float64",
+  "hour": "int8",
+  "day_of_week": "int8",
+  "is_weekend": "bool"
+}
