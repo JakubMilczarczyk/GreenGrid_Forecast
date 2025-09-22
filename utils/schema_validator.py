@@ -11,6 +11,7 @@ TYPE_ALIASES = {
     "int64": "i64",
     "float64": "f64",
     "bool": "boolean",
+    "boolean": "bool",
 }
 
 class SchemaValidationError(Exception):
@@ -38,8 +39,14 @@ def normalize_dtype(dtype_str: str) -> str:
         else:
             return "datetime"
 
-    # mapowanie aliasów
-    return TYPE_ALIASES.get(s, s)
+    # mapowanie aliasów w obie strony
+    if s in TYPE_ALIASES:
+        return TYPE_ALIASES[s]
+    # sprawdź czy odwrotność jest w aliasach
+    for k, v in TYPE_ALIASES.items():
+        if s == v:
+            return k
+    return s
 
 def validate_df(df: pl.DataFrame, schema_name: str) -> None:
     """
@@ -63,6 +70,8 @@ def validate_df(df: pl.DataFrame, schema_name: str) -> None:
         normalized_expected = normalize_dtype(expected_dtype)
 
         if normalized_actual != normalized_expected:
+            if {normalized_actual, normalized_expected} <= {"bool", "boolean"}:
+                continue
             raise SchemaValidationError(
                 f"Column '{col}' expected {expected_dtype}, got {actual_dtype}"
             )
