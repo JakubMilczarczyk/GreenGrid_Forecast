@@ -1,17 +1,19 @@
+# import sys
 import os
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import datetime
+# sys.path.append('/opt/airflow/dags')
 from utils.forecast.forecast import run_forecast
 
-default_args = {"start_date": datetime(2025, 5, 15)}
+default_args = {"start_date": datetime(2025, 9, 21)}
 
 def check_model():
-    if not os.path.exists('/opt/services/airflow/shared/models/saved_models/linear_regression_model.joblib'): # TODO: change to the input model path (input from UI or API)
+    if not os.path.exists('/opt/airflow/shared/models/saved_models/linear_regression_model.joblib'): # TODO: change to the input model path (input from UI or API)
         raise FileNotFoundError("Model file not found. Please ensure the model is available at the specified path.")
 
 def check_data():
-    if not os.path.exists('/opt/services/airflow/shared/data/splits/x_test.parquet'): # TODO: change to the actual input file path
+    if not os.path.exists('/opt/airflow/shared/data/splits/x_test.parquet'): # TODO: change to the actual input file path
         raise FileNotFoundError("Input data file not found. Please ensure the data is available at the specified path.")
 
 with DAG(

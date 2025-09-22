@@ -4,7 +4,7 @@ import logging
 import os
 from pathlib import Path
 import polars as pl
-from utils.schema_validator import validate_df 
+from project_utils.schema_validator import validate_df 
 
 logging.basicConfig(level=logging.INFO)
 

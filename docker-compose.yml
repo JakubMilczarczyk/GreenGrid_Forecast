@@ -15,7 +15,7 @@ x-airflow-common:
     - ./services/airflow/logs:/opt/airflow/logs
     - ./services/airflow/plugins:/opt/airflow/plugins
     - ./schemas:/opt/schemas
-    - ./utils:/opt/utils
+    - ./project_utils:/opt/project_utils
     # W produkcji na razie nie montujemy shared (odkomentuj, gdy potrzebujesz)...
     # - shared_data:${DATA_DIR}
     # - shared_models:${MODELS_DIR}

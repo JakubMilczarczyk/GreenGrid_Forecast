@@ -75,6 +75,11 @@ def load_merged_dataframe(return_source=False) -> tuple:
                 on="timestamp",
                 how="outer"
             )
+
+            # OGRANICZENIE: tylko daty z forecastu
+            forecast_dates = set(df_forecast["timestamp"].dt.date)
+            df_merged = df_merged[df_merged["timestamp"].dt.date.isin(forecast_dates)]
+
             df_merged = df_merged.sort_values("timestamp")
             return (df_merged, "Plik Parquet") if return_source else df_merged
 

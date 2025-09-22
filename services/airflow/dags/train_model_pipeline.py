@@ -2,7 +2,7 @@ from airflow import DAG
 from airflow.operators.bash import BashOperator
 from datetime import datetime
 
-default_args = {"start_date": datetime(2025, 5, 15)}
+default_args = {"start_date": datetime(2025, 9, 21)}
 
 with DAG(
     "train_model_pipeline",

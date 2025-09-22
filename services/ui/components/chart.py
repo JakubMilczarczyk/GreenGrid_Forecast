@@ -46,7 +46,7 @@ def render_chart(df: pd.DataFrame, model_col: str, benchmark_col: str, data_sour
         return
 
     # Make sure we have hourly timestamps; if multiple records per hour, aggregate by mean
-    df_day["hour"] = df_day["timestamp"].dt.floor("H")
+    df_day["hour"] = df_day["timestamp"].dt.floor("h")
     agg = df_day.groupby("hour").agg({
         "actual_OZE_MWh": "mean",
         model_col: "mean",
