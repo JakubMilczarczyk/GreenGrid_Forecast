@@ -50,4 +50,4 @@ All rights reserved. Unauthorized use, distribution, or reproduction of code, id
 
 Contact
 Author: Jakub Milczarczyk
-LinkedIn: www.linkedin.com/in/jakub-milczarczyk
+[Connect on LinkedIn](www.linkedin.com/in/jakub-milczarczyk)
