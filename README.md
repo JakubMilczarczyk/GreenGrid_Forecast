@@ -3,20 +3,30 @@
 GreenGrid Forecast is a lightweight, modular data pipeline designed to forecast energy consumption and renewable energy (PV/Wind) production based on historical and weather data.  
 The project focuses on providing accurate short-term and medium-term predictions for the energy sector, with an emphasis on scalability and real-world applications.
 
-## Architecture Overview
-- **Data Extraction:** Airflow (scheduled ETL pipelines)
-- **Data Processing:** Python (Polars, Pandas)
-- **Forecasting Models:** Prophet / ARIMA (expandable to ML models)
-- **Storage:** Parquet/CSV (local; S3 planned for later phases)
-- **Visualization:** Streamlit Web App
-- **Deployment:** Docker Compose (development), scalable cloud hosting (future)
+> **⚠️ Project Status: Under Construction / Migration**
+> This project is currently transitioning from a monolithic script to a modular architecture.
+> While the core data extraction logic is functional, the orchestration (Airflow) and visualization layers are being refactored.
 
-## Project Roadmap
-1. Automated extraction and cleaning of historical energy and weather datasets
-2. Modular ETL pipelines managed by Apache Airflow
-3. Forecasting model development and evaluation
-4. Web-based dashboard displaying real-time forecasts and historical trends
-5. Public demo deployment and documentation
+##  Architecture Overview
+
+* **Data Ingestion:** Automated scrapers/API clients for PSE and ENTSO-E.
+* **Processing:** Python (**Polars/Pandas**) for high-performance time-series manipulation.
+* **Forecasting:** Prophet / ARIMA implemented for price & generation trends.
+* **Storage:** Parquet (Silver Layer) for analytical queries.
+* **Infrastructure:** Dockerized environment (Development phase).
+
+##  Data Sources
+This pipeline integrates complex domain-specific data sources:
+1.  **PSE (Polskie Sieci Elektroenergetyczne):** Real-time system imbalance, CRO (Operational Reserve), and generation data.
+2.  **TGE (Towarowa Giełda Energii):** Day-Ahead Market (Rdn) prices.
+3.  **ENTSO-E Transparency Platform:** Cross-border flows and European load data.
+4.  **Open-Meteo API:** Weather parameters affecting RES generation.
+
+##  Roadmap & Current Focus
+- [x] **Core:** Automated extraction of PSE & ENTSO-E datasets.
+- [x] **Logic:** Basic forecasting model for imbalance prices.
+- [ ] **Architecture:** Migrating ETL pipelines to Apache Airflow.
+- [ ] **Visualization:** Building a Streamlit dashboard for traders.
 
 ## Data Sources
 - [ENTSO-E Transparency Platform](https://transparency.entsoe.eu/) – energy load, production data by country
